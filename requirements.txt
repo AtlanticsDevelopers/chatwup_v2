@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+mysql-connector-python
+langchain
+openai
+faiss-cpu
+pandas
+beautifulsoup4
+requests
+#TO INSTALL THIS FILE
+#pip install -r requirements.txt
+#pip install fastapi uvicorn requests
