@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+import requests
+import os
 from pydantic import BaseModel
 from chatbot import ask_question
 
@@ -14,25 +16,17 @@ class Question(BaseModel):
 async def chat(question: Question):
     respuesta = ask_question(question.question)
     return {"response": respuesta}
-
-
-'''
-from fastapi import FastAPI, Request
-import requests
-import os
-
-app = FastAPI()
-
+##WHATS APP
 # 🔹 Credenciales de la API de Meta
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN_WHATSAPP")
 PHONE_NUMBER_ID = "471456926058403"
 WHATSAPP_API_URL = f"https://graph.facebook.com/v17.0/{PHONE_NUMBER_ID}/messages"
 
 # 🔹 URL de tu Chatbot FastAPI
-CHATBOT_API_URL = "http://127.0.0.1:8000/chat/"  # Cambia esto si tu chatbot está en otro servidor
+CHATBOT_API_URL = "https://chatwup-v2.onrender.com/chat/"  # Cambia esto si tu chatbot está en otro servidor
 
 # 🔹 Verificación del Webhook (Meta lo requiere)
-VERIFY_TOKEN = "TU_VERIFY_TOKEN"
+VERIFY_TOKEN = "Atlantics2025"
 
 @app.get("/webhook/")
 async def verify_webhook(request: Request):
@@ -79,4 +73,4 @@ def send_whatsapp_message(to, text):
         "type": "text",
         "text": {"body": text}
     }
-    requests.post(WHATSAPP_API_URL, headers=headers, json=payload)'''
+    requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
