@@ -1,4 +1,4 @@
-'''from fastapi import FastAPI
+from fastapi import FastAPI
 from pydantic import BaseModel
 from chatbot import ask_question
 
@@ -78,4 +78,4 @@ def send_whatsapp_message(to, text):
         "type": "text",
         "text": {"body": text}
     }
-    requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
+    requests.post(WHATSAPP_API_URL, headers=headers, json=payload)'''
