@@ -8,3 +8,4 @@ def connect_db():
         password="Atl@ntics02!",  # Cambia esto por tu contraseña
         database="chatbot_db"
     )
+      

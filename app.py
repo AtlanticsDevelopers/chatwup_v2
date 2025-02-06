@@ -15,6 +15,7 @@ async def chat(question: Question):
     respuesta = ask_question(question.question)
     return {"response": respuesta}
 
+
 '''
 from fastapi import FastAPI, Request
 import requests

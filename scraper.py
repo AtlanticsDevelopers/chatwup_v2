@@ -35,3 +35,4 @@ if __name__ == "__main__":
     if content:
         save_to_db(content)
         print("✅ Datos guardados en MySQL")
+        
