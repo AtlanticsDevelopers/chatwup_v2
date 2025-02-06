@@ -2,6 +2,8 @@ import os
 
 import mysql.connector
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+#from langchain_community.chat_models import ChatOpenAI
+#from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import FAISS
 import pandas as pd
