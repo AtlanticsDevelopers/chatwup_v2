@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 import requests
 import os
+import json
 from pydantic import BaseModel
 from chatbot import ask_question
 
