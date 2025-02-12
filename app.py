@@ -47,7 +47,7 @@ async def verify_webhook(request: Request):
 @app.post("/webhook/")
 async def handle_whatsapp_message(request: Request):
     data = await request.json()
-    print(f"📩 Webhook Data Received: {data}")  # Print incoming requests
+    print(f"📩 Incoming WhatsApp Data: {data}")  # 🔹 Debugging log
 
     if "entry" in data:
         for entry in data["entry"]:
@@ -57,11 +57,15 @@ async def handle_whatsapp_message(request: Request):
                     sender_id = message["from"]
                     user_message = message["text"]["body"]
 
-                    print(f"📨 Message from {sender_id}: {user_message}")  # Log messages
+                    print(f"✅ Message Received from {sender_id}: {user_message}")  # 🔹 Debugging log
 
+                    # 🔹 Call the chatbot FastAPI
                     bot_response = requests.post(CHATBOT_API_URL, json={"question": user_message})
-                    bot_reply_text = bot_response.json().get("response", "Sorry, I couldn't process that.")
+                    bot_reply_text = bot_response.json().get("response", "Lo siento, no pude procesar eso.")
 
+                    print(f"🤖 Chatbot Response: {bot_reply_text}")  # 🔹 Debugging log
+
+                    # 🔹 Send the response to WhatsApp
                     send_whatsapp_message(sender_id, bot_reply_text)
 
     return {"status": "received"}
