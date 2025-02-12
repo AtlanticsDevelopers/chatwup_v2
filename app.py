@@ -10,6 +10,10 @@ app = FastAPI()
 # Modelo de datos para recibir preguntas
 class Question(BaseModel):
     question: str
+##IS AVAILABLE
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
 # Endpoint del chatbot
 @app.post("/chat/")
