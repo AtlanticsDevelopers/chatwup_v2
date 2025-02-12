@@ -64,10 +64,11 @@ async def handle_whatsapp_message(request: Request):
 
     if "entry" in data:
         print(f"📩 ENTRY IN DATA {data}")  # 🔹 Debugging log
-        '''for entry in data["entry"]:
+        for entry in data["entry"]:
             for change in entry.get("changes", []):
                 message_data = change.get("value", {}).get("messages", [])
-                for message in message_data:
+                print(f"📩 MESSAGE {message_data}")  # 🔹 Debugging log
+                '''for message in message_data:
                     sender_id = message["from"]
                     user_message = message.get("text", {}).get("body", "")
                     if not sender_id or not user_message:
