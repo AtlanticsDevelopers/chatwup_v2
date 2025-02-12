@@ -12,9 +12,12 @@ app = FastAPI()
 class Question(BaseModel):
     question: str
     
-port = int(os.environ.get("PORT", 10000))
+@app.get("/")
+def read_root():
+    return {"status": "running"}
 
 if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
     
 ##IS AVAILABLE
