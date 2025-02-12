@@ -40,7 +40,7 @@ async def verify_webhook(request: Request):
         print("✅ Webhook Verified Successfully!")
         return int(challenge)  # Meta expects a number
 
-    print("❌ Webhook Verification Failed!")
+    print(f"❌ Webhook Verification Failed! Expected token: {VERIFY_TOKEN}, Received token: {token}")
     return {"error": "Invalid verification"}, 403
 
 # 🔹 Recibir mensajes de WhatsApp y responder con el chatbot
