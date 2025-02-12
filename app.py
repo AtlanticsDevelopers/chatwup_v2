@@ -73,6 +73,4 @@ def send_whatsapp_message(to, text):
         "type": "text",
         "text": {"body": text}
     }
-    
-    response = requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
-    print("WhatsApp API Response:", response.status_code, response.text)  # 🔹 Agrega esta línea para depurar
+    requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
