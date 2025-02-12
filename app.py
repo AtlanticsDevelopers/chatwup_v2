@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Request
-import requests
 import os
 from fastapi.responses import PlainTextResponse
 import uvicorn
 from pydantic import BaseModel
+import httpx  # Use httpx for async HTTP requests
 from chatbot import ask_question
 
 # Configurar FastAPI
@@ -13,30 +13,24 @@ app = FastAPI()
 class Question(BaseModel):
     question: str
     
-##port = int(os.environ.get("PORT", 10000))
-
-##if __name__ == "__main__":
-  ##  uvicorn.run(app, host="0.0.0.0", port=port)
-
 # Endpoint del chatbot
 @app.post("/chat/")
 async def chat(question: Question):
-    respuesta = ask_question(question.question)
+    respuesta = await ask_question(question.question)  # Ensure ask_question is async if it involves I/O
     return {"response": respuesta}
 
-##IS AVAILABLE
+# Health check endpoint
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
 
-##WHATS APP
 # 🔹 Credenciales de la API de Meta
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN_WHATSAPP")
 PHONE_NUMBER_ID = "471456926058403"
 WHATSAPP_API_URL = f"https://graph.facebook.com/v17.0/{PHONE_NUMBER_ID}/messages"
 
 # 🔹 URL de tu Chatbot FastAPI
-CHATBOT_API_URL = "http://localhost:10000/chat/"  # Cambia esto si tu chatbot está en otro servidor
+CHATBOT_API_URL = "http://localhost:10000/chat/"
 
 # 🔹 Verificación del Webhook (Meta lo requiere)
 VERIFY_TOKEN = "Atlantics2025"
@@ -47,58 +41,41 @@ async def verify_webhook(request: Request):
     token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
 
-    print(f"🔹 Incoming Verification Request: mode={mode}, token={token}, challenge={challenge}")
-
     if mode == "subscribe" and token == VERIFY_TOKEN:
-        print("✅ Webhook Verified Successfully!")
-        return challenge  # ✅ Returns plain text
+        return challenge  # Returns plain text
 
-    print(f"❌ Webhook Verification Failed! Expected token: {VERIFY_TOKEN}, Received token: {token}")
     return "Invalid verification", 403
 
 # 🔹 Recibir mensajes de WhatsApp y responder con el chatbot
 @app.post("/webhook/")
 async def handle_whatsapp_message(request: Request):
     data = await request.json()
-    print(f"📩 Incoming WhatsApp Data: {data}")  # 🔹 Debugging log
-
+    
     if "entry" in data:
-        print(f"📩 ENTRY IN DATA {data}")  # 🔹 Debugging log
         for entry in data["entry"]:
             for change in entry.get("changes", []):
                 message_data = change.get("value", {}).get("messages", [])
-                print(f"📩 MESSAGE {message_data}")  # 🔹 Debugging log
                 for message in message_data:
                     sender_id = message["from"]
                     user_message = message.get("text", {}).get("body", "")
-                    print(f"📩 sender_id {sender_id}")  # 🔹 Debugging log
-                    '''if not sender_id or not user_message:
-                        print("⚠️ No valid message received, skipping...")
-                        continue'''
-
-                    print(f"✅ Message Received from {sender_id}: {user_message}")  # 🔹 Debugging log
 
                     # 🔹 Call the chatbot FastAPI
-                    bot_response = requests.post(CHATBOT_API_URL, json={"question": user_message})
-                    # Debugging log
-                    print(f"📤 Request Sent to Chatbot: {CHATBOT_API_URL}")
-                    print(f"🔴 Response Status Code: {bot_response.status_code}")
-                    print(f"📨 Full Response: {bot_response.text}")
+                    async with httpx.AsyncClient() as client:  # Use httpx.AsyncClient for async requests
+                        bot_response = await client.post(CHATBOT_API_URL, json={"question": user_message})
 
                     # Extract response text safely
                     if bot_response.status_code == 200:
                         bot_reply_text = bot_response.json().get("response", "Lo siento, no pude procesar eso.")
                     else:
                         bot_reply_text = f"⚠️ Error {bot_response.status_code}: {bot_response.text}"
-                    # bot_reply_text = bot_response.json().get("response", "Lo siento, no pude procesar eso.")
-                    print(f"🤖 Chatbot Response: {bot_reply_text}")
-                    # 🔹 Send the response to WhatsApp
-                    #send_whatsapp_message(sender_id, bot_reply_text)
+
+                    # Send the response to WhatsApp
+                    await send_whatsapp_message(sender_id, bot_reply_text)
 
     return {"status": "received"}
 
 # 🔹 Función para enviar mensajes a WhatsApp
-def send_whatsapp_message(to, text):
+async def send_whatsapp_message(to, text):
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
         "Content-Type": "application/json"
@@ -109,12 +86,9 @@ def send_whatsapp_message(to, text):
         "type": "text",
         "text": {"body": text}
     }
-    response = requests.post(WHATSAPP_API_URL, headers=headers, json=payload)
-    
-    print(f"🔑 WhatsApp Access Token: {ACCESS_TOKEN}")  # Debug token  
-    print(f"📤 Sending Message to {to}: {text}")  
-    print(f"📝 WhatsApp API Response: {response.status_code}, {response.text}")  
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(WHATSAPP_API_URL, headers=headers, json=payload)
 
     if response.status_code != 200:
         print(f"❌ ERROR sending message: {response.text}")
-    
