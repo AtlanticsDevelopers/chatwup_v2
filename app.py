@@ -56,6 +56,39 @@ async def verify_webhook(request: Request):
     print(f"❌ Webhook Verification Failed! Expected token: {VERIFY_TOKEN}, Received token: {token}")
     return "Invalid verification", 403
 
+# 🔹 Recibir mensajes de WhatsApp y responder con el chatbot
+@app.post("/webhook/")
+async def handle_whatsapp_message(request: Request):
+    data = await request.json()
+    print(f"📩 Incoming WhatsApp Data: {data}")  # 🔹 Debugging log
+
+    if "entry" in data:
+        print(f"📩 ENTRY IN DATA {data}")  # 🔹 Debugging log
+        '''for entry in data["entry"]:
+            for change in entry.get("changes", []):
+                message_data = change.get("value", {}).get("messages", [])
+                for message in message_data:
+                    sender_id = message["from"]
+                    user_message = message.get("text", {}).get("body", "")
+                    if not sender_id or not user_message:
+                        print("⚠️ No valid message received, skipping...")
+                        continue
+
+                    print(f"✅ Message Received from {sender_id}: {user_message}")  # 🔹 Debugging log
+
+                    # 🔹 Call the chatbot FastAPI
+                    bot_response = requests.post(CHATBOT_API_URL, json={"question": user_message})
+                    bot_reply_text = bot_response.json().get("response", "Lo siento, no pude procesar eso.")
+
+                    print(f"🤖 Chatbot Response: {bot_reply_text}")  # 🔹 Debugging log
+
+                    # 🔹 Send the response to WhatsApp
+                    send_whatsapp_message(sender_id, bot_reply_text)'''
+
+    return {"status": "received"}
+
+# 🔹 Función para enviar mensajes a WhatsApp
+def send_whatsapp_message(to, text):
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
         "Content-Type": "application/json"
