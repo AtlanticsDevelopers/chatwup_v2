@@ -79,13 +79,12 @@ async def handle_whatsapp_message(request: Request):
                     print(f"✅ Message Received from {sender_id}: {user_message}")  # 🔹 Debugging log
 
                     # 🔹 Call the chatbot FastAPI
-                    '''bot_response = requests.post(CHATBOT_API_URL, json={"question": user_message})
+                    bot_response = requests.post(CHATBOT_API_URL, json={"question": user_message})
                     bot_reply_text = bot_response.json().get("response", "Lo siento, no pude procesar eso.")
 
-                    print(f"🤖 Chatbot Response: {bot_reply_text}")  # 🔹 Debugging log
-
+                    print(f"🤖 Chatbot Response: {bot_reply_text}")
                     # 🔹 Send the response to WhatsApp
-                    send_whatsapp_message(sender_id, bot_reply_text)'''
+                    #send_whatsapp_message(sender_id, bot_reply_text)
 
     return {"status": "received"}
 
