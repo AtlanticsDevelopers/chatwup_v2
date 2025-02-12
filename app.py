@@ -23,7 +23,7 @@ PHONE_NUMBER_ID = "471456926058403"
 WHATSAPP_API_URL = f"https://graph.facebook.com/v17.0/{PHONE_NUMBER_ID}/messages"
 
 # 🔹 URL de tu Chatbot FastAPI
-CHATBOT_API_URL = "https://chatwup-v2.onrender.com/chat/"  # Cambia esto si tu chatbot está en otro servidor
+CHATBOT_API_URL = "https://chatwup-v2-9749.onrender.com/chat/"  # Cambia esto si tu chatbot está en otro servidor
 
 # 🔹 Verificación del Webhook (Meta lo requiere)
 VERIFY_TOKEN = "Atlantics2025"
