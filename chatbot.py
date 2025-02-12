@@ -1,5 +1,5 @@
 import os
-
+import asyncio  # Import asyncio to use to_thread
 import mysql.connector
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 #from langchain_community.chat_models import ChatOpenAI
@@ -47,5 +47,5 @@ def prepare_chatbot():
 qa_chain = prepare_chatbot()
 
 # Function to answer questions
-def ask_question(question):
-    return qa_chain.run(question)
+async def ask_question(question):
+    return await asyncio.to_thread(qa_chain.run, question)
