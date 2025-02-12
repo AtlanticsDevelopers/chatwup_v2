@@ -71,7 +71,7 @@ async def handle_whatsapp_message(request: Request):
                 for message in message_data:
                     sender_id = message["from"]
                     user_message = message.get("text", {}).get("body", "")
-                    print(f"📩 USER MESSAGE {message_data}")  # 🔹 Debugging log
+                    #print(f"📩 USER MESSAGE {message_data}")  # 🔹 Debugging log
                     '''if not sender_id or not user_message:
                         print("⚠️ No valid message received, skipping...")
                         continue'''
@@ -85,7 +85,7 @@ async def handle_whatsapp_message(request: Request):
                     print(f"🤖 Chatbot Response: {bot_reply_text}")  # 🔹 Debugging log
 
                     # 🔹 Send the response to WhatsApp
-                    send_whatsapp_message(sender_id, bot_reply_text)
+                    '''send_whatsapp_message(sender_id, bot_reply_text)'''
 
     return {"status": "received"}
 
