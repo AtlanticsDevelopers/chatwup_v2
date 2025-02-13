@@ -107,7 +107,7 @@ memory = ConversationSummaryMemory(llm=llm)
 # Crear API con FastAPI
 app = FastAPI()
 
-@app.post("/chat")
+@app.post("/chat/")
 async def chat_endpoint(query: dict):
     question = query.get("question", "")
     
