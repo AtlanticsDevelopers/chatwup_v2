@@ -3,6 +3,8 @@ import os
 from fastapi.responses import PlainTextResponse
 import uvicorn
 from pydantic import BaseModel
+import json
+from pydantic import BaseModel
 import httpx  # Use httpx for async HTTP requests
 from chatbot import ask_question
 
@@ -23,6 +25,30 @@ async def chat(question: Question):
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+class Encuesta(BaseModel):
+    chat_id: str
+    respuesta: str
+
+@app.post("/iniciar_encuesta/")
+async def iniciar_encuesta(encuesta: Encuesta):
+    # Simulamos la búsqueda en la base de datos
+    flujo = obtener_flujo_conversacion(encuesta.chat_id)
+
+    # Analizamos la respuesta del usuario y determinamos la siguiente pregunta
+    if encuesta.respuesta == "⭐⭐⭐⭐⭐":
+        respuesta = flujo["respuestas"]["⭐⭐⭐⭐⭐"]
+    elif encuesta.respuesta == "⭐⭐⭐":
+        respuesta = flujo["respuestas"]["⭐⭐⭐"]
+    else:
+        respuesta = flujo["respuestas"]["⭐"]
+
+    return {"mensaje": respuesta}
+
+def obtener_flujo_conversacion(chat_id):
+    # Este es un ejemplo de cómo obtendrías el flujo de la base de datos
+    # en tu caso deberías conectarte a tu base de datos MySQL
+    return json.loads("{\"inicio\": \"¡Hola! Gracias por hospedarte con nosotros. ¿Cómo calificarías tu experiencia en general? (1-5 ⭐)\", \"respuestas\": {\"⭐⭐⭐⭐⭐\": \"¡Nos alegra mucho! ¿Qué fue lo que más disfrutaste?\", \"⭐⭐⭐\": \"Gracias por tu opinión. ¿En qué podemos mejorar?\", \"⭐\": \"Lamentamos que tu experiencia no haya sido la mejor. ¿Hubo algún problema en particular?\"}, \"pregunta_2\": {\"⭐⭐⭐⭐⭐\": \"¡Genial! Nos alegra saberlo. ¿Y qué opinas de la comodidad de la cama?\", \"⭐⭐\": \"Lo sentimos. ¿Encontraste algo en particular que no te gustó?\"}, \"fin\": \"Gracias por tu respuesta. ¡Esperamos verte pronto! 😊\"}")
 
 # 🔹 Credenciales de la API de Meta
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN_WHATSAPP")
